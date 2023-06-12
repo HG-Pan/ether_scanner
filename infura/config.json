@@ -1,0 +1,6 @@
+{
+  "evn": "goerli",
+  "apiKey": "53c6ec220eb141e6ba82141677d4cc82",
+  "ReqPre": "https://",
+  "ReqParam": ".infura.io/v3/"
+}
