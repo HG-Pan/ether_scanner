@@ -15,3 +15,7 @@ else
     # 镜像不存在，先构建镜像再运行容器
     docker build -t ether_scanner:1.0 "$loc" && docker run -d -v "$logs_dir":/app/logs ether_scanner:1.0
 fi
+
+docker ps
+
+echo "ethers_scanner Startup complete..."
