@@ -1,4 +1,10 @@
-package main
+package config
 
-var mongoUrl string = "mongodb://pan:pan@149.248.39.109:27017"
-var targetUrl = "https://goerli.infura.io/v3/53c6ec220eb141e6ba82141677d4cc82"
+// MongoUrl DBUrl
+var MongoUrl = "mongodb://pan:pan@149.248.39.109:27017"
+
+// TargetUrl Ethereum websites to scan
+var TargetUrl = "https://goerli.infura.io/v3/53c6ec220eb141e6ba82141677d4cc82"
+
+// CurrentBlockNum represents the current block number being scanned
+var CurrentBlockNum int64 = 0

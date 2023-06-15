@@ -1,60 +1,29 @@
 package infura
 
 import (
-	"encoding/json"
-	abstract2 "ethers_scaenner/abstract"
+	"ether_scaenner/abstract"
+	"ether_scaenner/config"
 	"fmt"
 	"github.com/ethereum/go-ethereum/rpc"
 	"log"
-	"os"
 	"strconv"
 )
-
-type Config struct {
-	ReqPre   string `json:"reqPre"`
-	ReqParam string `json:"reqParam"`
-	EVN      string `json:"evn"`
-	APIKey   string `json:"apiKey"`
-}
-
-func loadConfig(filename string) (*Config, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open config file: %v", err)
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Fatal("Failed to close config file:", err)
-		}
-	}()
-
-	var config Config
-	err = json.NewDecoder(file).Decode(&config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode config file: %v", err)
-	}
-
-	return &config, nil
-}
 
 type JsonRpcClient struct {
 	client *rpc.Client
 }
 
 func NewJsonRpcClient() (*JsonRpcClient, error) {
-	config, err := loadConfig("infura/config.json")
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
-	}
-	client, err := rpc.Dial(config.ReqPre + config.EVN + config.ReqParam + config.APIKey)
+
+	client, err := rpc.Dial(config.TargetUrl)
 	if err != nil {
 		log.Fatalf("Could not connect to Infura: %v", err)
 	}
 	return &JsonRpcClient{client: client}, nil
 }
 
-func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract2.Block, error) {
-	var blockHex abstract2.BlockHex
+func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract.Block, error) {
+	var blockHex abstract.BlockHex
 	hexBlockNumber := fmt.Sprintf("0x%x", blockNumber) // 将 blockNumber 转换为带有 0x 前缀的十六进制字符串
 	err := ijrc.client.Call(&blockHex, "eth_getBlockByNumber", hexBlockNumber, true)
 	if err != nil {
@@ -62,7 +31,7 @@ func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract2.Block
 		return nil, err
 	}
 
-	block := abstract2.Block{
+	block := abstract.Block{
 		Number:     blockNumber,
 		Hash:       blockHex.Hash,
 		ParentHash: blockHex.ParentHash,
@@ -105,8 +74,8 @@ func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract2.Block
 	return &block, nil
 }
 
-func convertTransactionHexToTransaction(transactions []abstract2.TransactionHex) ([]abstract2.Transaction, error) {
-	converted := make([]abstract2.Transaction, len(transactions))
+func convertTransactionHexToTransaction(transactions []abstract.TransactionHex) ([]abstract.Transaction, error) {
+	converted := make([]abstract.Transaction, len(transactions))
 	for i, txHex := range transactions {
 		value, err := strconv.ParseInt(txHex.Value, 0, 64)
 		if err != nil {
@@ -136,7 +105,7 @@ func convertTransactionHexToTransaction(transactions []abstract2.TransactionHex)
 			return nil, fmt.Errorf("failed to parse transaction block number: %v", err)
 		}
 
-		converted[i] = abstract2.Transaction{
+		converted[i] = abstract.Transaction{
 			Hash:             txHex.Hash,
 			Nonce:            nonce,
 			BlockHash:        txHex.BlockHash,
@@ -154,7 +123,7 @@ func convertTransactionHexToTransaction(transactions []abstract2.TransactionHex)
 	return converted, nil
 }
 
-func (ijrc *JsonRpcClient) GetLatestBlock() (int64, error) {
+func (ijrc *JsonRpcClient) GetLatestNum() (int64, error) {
 	var blockNumberHex string
 	err := ijrc.client.Call(&blockNumberHex, "eth_blockNumber")
 	if err != nil {
