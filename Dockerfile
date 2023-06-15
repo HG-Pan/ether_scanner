@@ -1,5 +1,5 @@
 # 基于官方的Go镜像作为基础
-FROM golang:latest
+FROM golang:1.19.4
 
 # 设置容器内日志文件的路径
 ENV LOG_FILE_PATH=/app/logs/mylog.log
