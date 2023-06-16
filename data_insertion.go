@@ -76,7 +76,7 @@ func insetBlockInfoCurrent(currentNum int64, database string, table string) {
 	// 连接到MongoDB
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.MongoUrl))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	defer func(client *mongo.Client, ctx context.Context) {
