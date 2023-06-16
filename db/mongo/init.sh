@@ -8,4 +8,4 @@ if [[ "$(docker images -q mongodb 2> /dev/null)" != "" ]]; then
 fi
 
 # Build the Docker image
-docker build -t mongodb .
+docker build -t mongodb:1.0 .
