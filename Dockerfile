@@ -24,11 +24,12 @@ COPY --from=builder /app/main /app/main
 # Copy the SSL certificates
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-# 创建/app/logs文件夹存放日志文件
-COPY --from=builder /app/logs /app/logs
+
+RUN mkdir -p /app/logs
 
 # 设定环境变量
 ENV LOG_FILE_PATH=/app/logs/app.log
 
 # 启动服务
 ENTRYPOINT ["/app/main"]
+

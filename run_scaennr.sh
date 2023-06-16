@@ -24,4 +24,4 @@ docker ps
 echo "ether_scanner Startup complete..."
 
 
-#docker network create location_network
+
