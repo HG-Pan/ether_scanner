@@ -1,5 +1,5 @@
 # 使用官方的Golang镜像作为构建环境
-FROM golang:1.19.4-alpine as builder
+FROM golang:1.19.4 as builder
 
 # 设定工作目录
 WORKDIR /app
@@ -24,7 +24,6 @@ COPY --from=builder /app/main /app/main
 # Copy the SSL certificates
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-
 RUN mkdir -p /app/logs
 
 # 设定环境变量
@@ -32,4 +31,3 @@ ENV LOG_FILE_PATH=/app/logs/app.log
 
 # 启动服务
 ENTRYPOINT ["/app/main"]
-
