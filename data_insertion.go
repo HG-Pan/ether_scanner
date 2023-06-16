@@ -11,11 +11,26 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"time"
 )
 
+func initLogs() {
+	// 设置日志输出文件路径
+	logPath := filepath.Join("/app/logs", "app.log")
+	// 创建日志文件
+	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal("Failed to create log file: ", err)
+	}
+	// 设置日志输出到文件
+	log.SetOutput(logFile)
+	// 记录日志
+	log.Println("This is an example log message.")
+}
 func getEthClient() *abstract.EthClient {
 	infuraClient, err := infura.NewJsonRpcClient()
 	if err != nil {
@@ -223,6 +238,7 @@ func insetBlockInfoHistory(latestNum int64, database string, table string) {
 }
 
 func insetBlockInfo() {
+	initLogs()
 
 	var database = "ethereum"
 	var table = "blocks"
