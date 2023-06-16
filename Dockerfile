@@ -11,8 +11,10 @@ COPY . .
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# 使用scratch作为基础镜像，构建一个没有任何额外层的镜像
-FROM scratch
+# 使用带有Alpine Linux的Golang镜像作为基础镜像
+FROM alpine:3.18
+
+RUN apk --no-cache add ca-certificates
 
 # 从构建环境中复制二进制文件到当前环境
 COPY --from=builder /app/main /app/main
