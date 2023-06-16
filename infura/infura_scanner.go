@@ -27,7 +27,7 @@ func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract.Block,
 	hexBlockNumber := fmt.Sprintf("0x%x", blockNumber) // 将 blockNumber 转换为带有 0x 前缀的十六进制字符串
 	err := ijrc.client.Call(&blockHex, "eth_getBlockByNumber", hexBlockNumber, true)
 	if err != nil {
-		log.Fatalf("eth_getBlockByNumber: %v", err)
+		log.Printf("eth_getBlockByNumber: %v", err)
 		return nil, err
 	}
 
