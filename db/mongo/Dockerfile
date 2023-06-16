@@ -1,5 +1,5 @@
 # Use the official MongoDB base image
-FROM mongo
+FROM mongo:6.0
 
 # Set a custom data directory
 ENV MONGO_DATA_DIR /data/db
