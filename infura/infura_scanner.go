@@ -41,28 +41,28 @@ func (ijrc *JsonRpcClient) GetBlockByNumber(blockNumber int64) (*abstract.Block,
 
 	gasLimit, err := parseHexInt64(blockHex.GasLimit)
 	if err != nil {
-		log.Fatalf("Failed to parse gasLimit: %v", err)
+		log.Printf("Failed to parse gasLimit: %v", err)
 		return nil, err
 	}
 	block.GasLimit = gasLimit
 
 	gasUsed, err := parseHexInt64(blockHex.GasUsed)
 	if err != nil {
-		log.Fatalf("Failed to parse gasUsed: %v", err)
+		log.Printf("Failed to parse gasUsed: %v", err)
 		return nil, err
 	}
 	block.GasUsed = gasUsed
 
 	nonce, err := parseHexInt64(blockHex.Nonce)
 	if err != nil {
-		log.Fatalf("Failed to parse nonce: %v", err)
+		log.Printf("Failed to parse nonce: %v", err)
 		return nil, err
 	}
 	block.Nonce = nonce
 
 	timestamp, err := parseHexInt64(blockHex.Timestamp)
 	if err != nil {
-		log.Fatalf("Failed to parse timestamp: %v", err)
+		log.Printf("Failed to parse timestamp: %v", err)
 		return nil, err
 	}
 	block.Timestamp = timestamp

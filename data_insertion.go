@@ -44,7 +44,7 @@ func getBlockByNumber(blockNum int64) {
 func getBlockByNum(blockNum int64) (block *abstract.Block) {
 	block, err := getEthClient().GetBlockByNumber(blockNum)
 	if err != nil {
-		log.Fatal(err)
+		return nil
 	}
 	return block
 }
@@ -89,13 +89,17 @@ func insetBlockInfoCurrent(currentNum int64, database string, table string) {
 
 			// 在当前块和最新块之间插入所有的块
 			for currentNum <= latestNum {
-				// 获取并插入当前块的数据
+				// 获取当前块的数据
 				block := getBlockByNum(currentNum)
-				_, err = collection.InsertOne(context.TODO(), block)
-				if err != nil {
-					// 将错误发送到错误通道并返回
-					errChan <- err
-					currentNum++
+				if block != nil {
+					// 插入当前块的数据
+					_, err = collection.InsertOne(context.TODO(), block)
+					if err != nil {
+						// 将错误发送到错误通道并返回
+						errChan <- err
+						currentNum++
+						continue
+					}
 				}
 				// 准备插入下一个块的数据
 				currentNum++
@@ -177,7 +181,8 @@ func insetBlockInfoHistory(latestNum int64, database string, table string) {
 	// 选择数据库和集合
 	collection := client.Database(database).Collection(table)
 
-	var currentNum = atomic.LoadInt64(getTableMaxNum(database, table)) // 创建一个 WaitGroup 来等待所有 Goroutine 完成
+	//var currentNum = atomic.LoadInt64(getTableMaxNum(database, table)) // 创建一个 WaitGroup 来等待所有 Goroutine 完成
+	var currentNum = atomic.LoadInt64(&config.CurrentBlockNum) // 创建一个 WaitGroup 来等待所有 Goroutine 完成
 	var wg sync.WaitGroup
 	// 设置 Goroutine 的数量
 	goroutines := 10 // 根据需求设置合适的 Goroutine 数量
@@ -201,11 +206,13 @@ func insetBlockInfoHistory(latestNum int64, database string, table string) {
 			for blockNum := startBlock; blockNum <= endBlock; blockNum++ {
 				// 处理该区块的逻辑
 				block := getBlockByNum(blockNum)
-				_, err := collection.InsertOne(context.TODO(), block)
-				if err != nil {
-					log.Println(err)
-				} else {
-					log.Printf("区块 %d 已成功插入到MongoDB\n", block.Number)
+				if block != nil {
+					_, err := collection.InsertOne(context.TODO(), block)
+					if err != nil {
+						log.Println(err)
+					} else {
+						log.Printf("区块 %d 已成功插入到MongoDB\n", block.Number)
+					}
 				}
 			}
 		}(i)
