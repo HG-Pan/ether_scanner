@@ -67,7 +67,7 @@ func getBlockByNum(blockNum int64) (block *abstract.Block) {
 func getLatestNum() (latestBlock int64) {
 	latestBlock, err := getEthClient().GetLatestNum()
 	if err != nil {
-		// handle error
+		return -1
 	}
 	return latestBlock
 }
@@ -96,6 +96,12 @@ func insetBlockInfoCurrent(currentNum int64, database string, table string) {
 
 		for {
 			latestNum := getLatestNum()
+			// 如果最新块号为-1，则等待30秒再尝试
+			if latestNum == -1 {
+				time.Sleep(30 * time.Second)
+				continue
+			}
+
 			// 如果当前块号大于最新块号，则等待一秒再尝试
 			if currentNum > latestNum {
 				time.Sleep(1 * time.Second)

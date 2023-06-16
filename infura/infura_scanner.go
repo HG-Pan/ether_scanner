@@ -127,7 +127,7 @@ func (ijrc *JsonRpcClient) GetLatestNum() (int64, error) {
 	var blockNumberHex string
 	err := ijrc.client.Call(&blockNumberHex, "eth_blockNumber")
 	if err != nil {
-		log.Fatalf("eth_blockNumber: %v", err)
+		log.Printf("eth_blockNumber: %v\n", err)
 		return 0, err
 	}
 
