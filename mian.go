@@ -6,7 +6,7 @@ func main() {
 	//mongoDB()
 	//insetBlockInfoHistory(getLatestNum())
 	//getDBBlockByNumber(9163864, "ethereum", "blocks")
-	//insetBlockInfo()
+	insetBlockInfo()
 	//insetBlockInfoTest()
-	getTableMaxNum("ethereum", "blocks")
+	//getTableMaxNum("ethereum", "blocks")
 }

@@ -177,7 +177,7 @@ func insetBlockInfoHistory(latestNum int64, database string, table string) {
 	// 选择数据库和集合
 	collection := client.Database(database).Collection(table)
 
-	var currentNum = atomic.LoadInt64(getTableMaxNum("ethereum", "blocks")) // 创建一个 WaitGroup 来等待所有 Goroutine 完成
+	var currentNum = atomic.LoadInt64(getTableMaxNum(database, table)) // 创建一个 WaitGroup 来等待所有 Goroutine 完成
 	var wg sync.WaitGroup
 	// 设置 Goroutine 的数量
 	goroutines := 10 // 根据需求设置合适的 Goroutine 数量
@@ -216,17 +216,22 @@ func insetBlockInfoHistory(latestNum int64, database string, table string) {
 }
 
 func insetBlockInfo() {
-	initUniqueIndex("ethereum", "blocks", "number")
+
+	var database = "ethereum"
+	var table = "blocks"
+	var uniIndex = "number"
+
+	initUniqueIndex(database, table, uniIndex)
 	latestNum := getLatestNum()
 	var wg sync.WaitGroup
 	wg.Add(2)
 
 	go func() {
-		insetBlockInfoHistory(latestNum, "ethereum", "blocks")
+		insetBlockInfoHistory(latestNum, database, table)
 		wg.Done()
 	}()
 	go func() {
-		insetBlockInfoCurrent(latestNum, "ethereum", "blocks")
+		insetBlockInfoCurrent(latestNum, database, table)
 		wg.Done()
 	}()
 	wg.Wait()
